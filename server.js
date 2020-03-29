@@ -1,13 +1,18 @@
 var express = require('express');
 var app = express();
 var http = require('http');
-var cors = require('cors')
 var bodyParser = require('body-parser');
 var PORT = process.env.PORT || 5000;
 
 const MongoClient = require('mongodb').MongoClient
 
-app.use(cors({origin: '*'}));
+//CORS Middleware
+app.use(function (req, res, next) {
+    res.header("Access-Control-Allow-Origin", "*");
+    res.header("Access-Control-Allow-Methods", "GET,HEAD,OPTIONS,POST,PUT, DELETE");
+    res.header("Access-Control-Allow-Headers", "Origin, X-Requested-With, Content-Type, Accept, Authorization");
+    next();
+});
 
 // custom routes
 
