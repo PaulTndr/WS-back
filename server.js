@@ -3,7 +3,7 @@ var app = express();
 var http = require('http');
 //var cors = require('cors')
 var bodyParser = require('body-parser');
-var PORT = 3000;
+var PORT = process.env.PORT || 5000;
 
 const MongoClient = require('mongodb').MongoClient
 
