@@ -10,9 +10,27 @@ router.get('/', function (req, res) {
     console.log("Request /surveys/")
     surveysDB.collection('surveys').find(
         //On exclu les sondages en cours de vérification
-        { warnings: { $lt: 6 } }
-    ).toArray(function(err, results) {
-        console.log("found "+results.length+" surveys")
+        {
+            warnings: {
+                $lt: 6
+            }
+        }
+    ).toArray(function (err, results) {
+        console.log("found " + results.length + " surveys")
+        res.json(results);
+    })
+});
+
+router.post('/filteredByCat', function (req, res) {
+    console.log("Request /surveys/")
+    var idCat = req.body["cat"];
+    surveysDB.collection('surveys').find(
+        //On exclu les sondages en cours de vérification
+        {
+            category: idCat
+        }
+    ).toArray(function (err, results) {
+        console.log("found " + results.length + " surveys")
         res.json(results);
     })
 });
@@ -29,9 +47,11 @@ router.post('/getById', function (req, res) {
 
 router.get('/suspended', function (req, res) {
     console.log("Request /surveys/suspended")
-    surveysDB.collection('surveys').find(
-        { warnings: { $gte: 6 } }
-    ).toArray(function(err, results) {
+    surveysDB.collection('surveys').find({
+        warnings: {
+            $gte: 6
+        }
+    }).toArray(function (err, results) {
         res.json(results);
     })
 });
@@ -50,18 +70,18 @@ router.post('/vote', function (req, res) {
     surveysDB.collection('surveys').findOne({
         _id: idSurvey
     }, function (findErr, survey) {
-        survey.participations+=1
-        survey.options.forEach((option)=>{
-            if(option.text==optionText){
-                option.number+=1
+        survey.participations += 1
+        survey.options.forEach((option) => {
+            if (option.text == optionText) {
+                option.number += 1
                 console.log(req.body["user"])
                 option.users.push(JSON.parse(req.body["user"]))
             }
-            option.percent=Math.floor(100*option.number/survey.participations)
+            option.percent = Math.floor(100 * option.number / survey.participations)
         })
         surveysDB.collection('surveys').update({
             _id: idSurvey
-        },survey);
+        }, survey);
         res.send(survey);
     });
 });
@@ -73,15 +93,15 @@ router.post('/likedislike', function (req, res) {
     surveysDB.collection('surveys').findOne({
         _id: idSurvey
     }, function (findErr, survey) {
-        if(isLiked){
-            survey.likes+=1
+        if (isLiked) {
+            survey.likes += 1
         } else {
-            survey.likes-=1
+            survey.likes -= 1
         }
-        
+
         surveysDB.collection('surveys').update({
             _id: idSurvey
-        },survey);
+        }, survey);
         res.send(survey);
     });
 });
@@ -93,11 +113,11 @@ router.post('/addwarning', function (req, res) {
         _id: idSurvey
     }, function (findErr, survey) {
         survey.warnings = survey.warnings ? survey.warnings : 0;
-        survey.warnings+=1
-        
+        survey.warnings += 1
+
         surveysDB.collection('surveys').update({
             _id: idSurvey
-        },survey);
+        }, survey);
         res.send(survey);
     });
 });
@@ -121,7 +141,7 @@ router.post('/safe', function (req, res) {
         survey.warnings = 0;
         surveysDB.collection('surveys').update({
             _id: idSurvey
-        },survey);
+        }, survey);
         res.send(survey);
     });
 });
