@@ -106,14 +106,20 @@ router.post('/likedislike', function (req, res) {
     });
 });
 
-router.post('/addwarning', function (req, res) {
+router.post('/addOrRemoveWarning', function (req, res) {
     console.log("Request /surveys/addwarning");
     var idSurvey = mongoose.Types.ObjectId(req.body["surveyId"]);
+    var isAdd = req.body["isAdd"];
     surveysDB.collection('surveys').findOne({
         _id: idSurvey
     }, function (findErr, survey) {
         survey.warnings = survey.warnings ? survey.warnings : 0;
-        survey.warnings += 1
+        if (isAdd) {
+            survey.warnings += 1;
+        } else {
+            survey.warnings -= 1;
+        }
+
 
         surveysDB.collection('surveys').update({
             _id: idSurvey
