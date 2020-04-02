@@ -55,5 +55,6 @@ client.connect(err => {
     if (err) return console.log(err)
     surveysDB = client.db('SurveysDB_prod')
     var httpServer = http.createServer(app);
+    console.log("test")
     httpServer.listen(PORT, () => console.log(`API running on port ${PORT}`));
 })
